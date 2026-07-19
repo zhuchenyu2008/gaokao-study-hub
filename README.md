@@ -73,6 +73,71 @@ npm run build
 
 构建产物会生成在 `dist/` 目录中。
 
+## Docker 部署
+
+### 环境要求
+
+- Docker Engine
+- Docker Compose v2
+
+### 使用 Docker Compose 一键部署
+
+```bash
+git clone https://github.com/zhuchenyu2008/gaokao-study-hub.git
+cd gaokao-study-hub
+docker compose up -d --build
+```
+
+部署完成后访问：
+
+```text
+http://服务器IP:3000
+```
+
+默认使用宿主机的 `3000` 端口。需要更换端口时，可以通过 `APP_PORT` 指定，例如映射到 `8080`：
+
+```bash
+APP_PORT=8080 docker compose up -d --build
+```
+
+常用管理命令：
+
+```bash
+# 查看运行状态
+docker compose ps
+
+# 查看实时日志
+docker compose logs -f
+
+# 拉取最新代码并重新构建
+git pull
+docker compose up -d --build
+
+# 停止并删除容器
+docker compose down
+```
+
+### 直接使用 Docker 部署
+
+```bash
+docker build -t gaokao-study-hub .
+docker run -d \
+  --name gaokao-study-hub \
+  -p 3000:3000 \
+  --restart unless-stopped \
+  gaokao-study-hub
+```
+
+### 反向代理
+
+使用 Nginx、宝塔面板或其他反向代理时，将目标地址设置为：
+
+```text
+http://127.0.0.1:3000
+```
+
+如果修改了 `APP_PORT`，反向代理端口也要同步修改。正式对外提供服务时，建议配置域名和 HTTPS。
+
 ## 主要目录
 
 ```text
@@ -89,6 +154,7 @@ app/
 - 这是一个界面与交互原型，暂未接入真实课程、支付或用户数据库。
 - 视频播放器用于演示加载状态，不会播放真实视频。
 - 页面中的课程、账户和学习数据均为模拟数据。
+- Docker 容器默认监听 `0.0.0.0:3000`，并带有健康检查和自动重启配置。
 
 ## 许可证
 
